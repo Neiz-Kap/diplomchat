@@ -1,23 +1,23 @@
-import { withFormik } from 'formik';
-import get from 'lodash/get';
+import { withFormik } from "formik";
+import get from "lodash/get";
 
-import RegisterForm from '../components/RegisterForm';
+import RegisterForm from "../components/RegisterForm";
 
-import { userActions } from 'redux/actions';
-import validateForm from 'utils/validate';
-import { openNotification } from 'utils/helpers';
+import { userActions } from "redux/actions";
+import validateForm from "utils/validate";
+import { openNotification } from "utils/helpers";
 
-import store from 'redux/store';
+import store from "redux/store";
 
 export default withFormik({
   enableReinitialize: true,
   mapPropsToValues: () => ({
-    email: '',
-    fullname: '',
-    password: '',
-    password_2: ''
+    email: "",
+    fullname: "",
+    password: "",
+    password_2: "",
   }),
-  validate: values => {
+  validate: (values) => {
     let errors = {};
     validateForm({ isAuth: false, values, errors });
     return errors;
@@ -25,28 +25,32 @@ export default withFormik({
   handleSubmit: (values, { setSubmitting, props }) => {
     store
       .dispatch(userActions.fetchUserRegister(values))
-      .then(() => {
-        props.history.push('/signup/verify');
+      .then((dataObj) => {
+        props.history.push("/signup/verify");
         setSubmitting(false);
+        alert(
+          `diplomchat.vercel.app/signup/verify?hash=${dataObj.data.confirm_hash}`
+        );
+        document.title = dataObj.data.fullname;
       })
-      .catch(err => {
-        if (get(err, 'response.data.message.errmsg', '').indexOf('dup') >= 0) {
+      .catch((err) => {
+        if (get(err, "response.data.message.errmsg", "").indexOf("dup") >= 0) {
           openNotification({
-            title: 'Ошибка',
-            text: 'Аккаунт с такой почтой уже создан.',
-            type: 'error',
-            duration: 5000
+            title: "Ошибка",
+            text: "Аккаунт с такой почтой уже создан.",
+            type: "error",
+            duration: 5000,
           });
         } else {
           openNotification({
-            title: 'Ошибка',
-            text: 'Возникла серверная ошибка при регистрации. Повторите позже.',
-            type: 'error',
-            duration: 5000
+            title: "Ошибка",
+            text: "Возникла серверная ошибка при регистрации. Повторите позже.",
+            type: "error",
+            duration: 5000,
           });
         }
         setSubmitting(false);
       });
   },
-  displayName: 'RegisterForm'
+  displayName: "RegisterForm",
 })(RegisterForm);
