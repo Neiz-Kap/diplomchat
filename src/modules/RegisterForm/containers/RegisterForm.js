@@ -28,9 +28,7 @@ export default withFormik({
       .then((dataObj) => {
         props.history.push("/signup/verify");
         setSubmitting(false);
-        alert(
-          `diplomchat.vercel.app/signup/verify?hash=${dataObj.data.confirm_hash}`
-        );
+        alert(`localhost:3000/signup/verify?hash=${dataObj.data.confirm_hash}`);
         document.title = dataObj.data.fullname;
       })
       .catch((err) => {
